@@ -1,0 +1,125 @@
+.gerenciamento-page { min-height: 100vh; background: #faf7f4; }
+
+.gerenciamento-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.ger-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ger-header h1 {
+  font-family: 'Georgia', serif;
+  color: #3d2b1f;
+  margin: 0;
+}
+
+.btn-novo {
+  background: #c0855a;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.busca {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.busca:focus { border-color: #c0855a; }
+
+.tabela-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: #f5ede3;
+}
+
+th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+  color: #5a3e2b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #f0e4d4;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+tr.prioridade td:first-child {
+  border-left: 3px solid #ef4444;
+}
+
+.badge-urgente {
+  font-size: 0.75rem;
+  margin-left: 4px;
+}
+
+.servicos-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.tag {
+  background: #f0e4d4;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: #5a3e2b;
+}
+
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.acoes {
+  display: flex;
+  gap: 4px;
+}
+
+.acoes button {
+  background: none;
+  border: 1px solid #e8d5c0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.acoes button:hover { background: #f5ede3; }
+.acoes .btn-excluir:hover { background: #fee2e2; border-color: #fca5a5; }

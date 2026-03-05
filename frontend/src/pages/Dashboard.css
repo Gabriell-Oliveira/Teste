@@ -1,0 +1,90 @@
+.dashboard {
+  min-height: 100vh;
+  background: #faf7f4;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-header h1 {
+  font-family: 'Georgia', serif;
+  color: #3d2b1f;
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.btn-novo {
+  background: #c0855a;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-novo:hover { background: #a06840; }
+
+.filtros {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filtros button {
+  padding: 0.4rem 0.9rem;
+  border: 2px solid #e0d0c0;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.filtros button.ativo {
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.filtros button:hover {
+  border-color: #c0855a;
+}
+
+.postits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.2rem;
+}
+
+.carregando, .vazio {
+  text-align: center;
+  padding: 3rem;
+  color: #8b6f5e;
+}
+
+.vazio button {
+  margin-top: 1rem;
+  background: #c0855a;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}

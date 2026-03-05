@@ -1,0 +1,56 @@
+.navbar {
+  background: #3d2b1f;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.navbar-brand {
+  font-family: 'Georgia', serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.navbar-links button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.navbar-links button:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.navbar-links button.ativo {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  font-weight: 600;
+}
+
+.navbar-links button.sair {
+  color: #fca5a5;
+}
+
+.navbar-links button.sair:hover {
+  background: rgba(239,68,68,0.2);
+  color: #fca5a5;
+}

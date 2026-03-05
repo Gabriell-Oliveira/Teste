@@ -1,0 +1,224 @@
+.form-pedido-page {
+  min-height: 100vh;
+  background: #faf7f4;
+}
+
+.form-container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.form-container h1 {
+  font-family: 'Georgia', serif;
+  color: #3d2b1f;
+  margin-bottom: 1.5rem;
+}
+
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.form-section h2 {
+  color: #3d2b1f;
+  font-size: 1rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0e4d4;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 540px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #5a3e2b;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #c0855a;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.servicos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+}
+
+.servico-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.6rem 0.8rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  gap: 2px;
+}
+
+.servico-btn span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.servico-btn small {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.servico-btn:hover {
+  border-color: #c0855a;
+}
+
+.servico-btn.selecionado {
+  background: #c0855a;
+  border-color: #c0855a;
+}
+
+.servico-btn.selecionado span,
+.servico-btn.selecionado small {
+  color: white;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5a3e2b;
+  margin-top: 0.5rem;
+}
+
+.resumo {
+  background: #f0e4d4;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  color: #3d2b1f;
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn-cancelar {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancelar:hover {
+  border-color: #c0855a;
+}
+
+.btn-salvar {
+  padding: 0.75rem 1.5rem;
+  background: #c0855a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-salvar:hover:not(:disabled) { background: #a06840; }
+.btn-salvar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Peças individuais no formulário ── */
+.peca-form {
+  border: 2px solid #e8d5c0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.peca-form.peca-urgente {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.peca-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #3d2b1f;
+}
+
+.btn-urgente-toggle {
+  padding: 0.3rem 0.75rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #666;
+}
+
+.btn-urgente-toggle.ativo {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+.btn-urgente-toggle:hover:not(.ativo) {
+  border-color: #ef4444;
+  color: #ef4444;
+}

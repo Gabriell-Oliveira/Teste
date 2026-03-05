@@ -1,0 +1,203 @@
+.historico-page { min-height: 100vh; background: #faf7f4; }
+
+.historico-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.historico-content h1 {
+  font-family: 'Georgia', serif;
+  color: #3d2b1f;
+  margin-bottom: 1rem;
+}
+
+.hist-filtros {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.busca-hist {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.busca-hist:focus { border-color: #c0855a; }
+
+.periodo-btns { display: flex; gap: 0.4rem; }
+
+.periodo-btns button {
+  padding: 0.4rem 0.9rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.periodo-btns button.ativo {
+  background: #c0855a;
+  border-color: #c0855a;
+  color: white;
+}
+
+.hist-resumo {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumo-stat {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  border: 1px solid #f0e4d4;
+  text-align: center;
+}
+
+.resumo-stat.destaque { border-color: #c0855a; }
+
+.stat-value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #3d2b1f;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hist-tabela-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow-x: auto;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead tr { background: #f5ede3; }
+
+th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  color: #5a3e2b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #f0e4d4;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.tag-hist {
+  background: #f0e4d4;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  color: #5a3e2b;
+}
+
+.badge-visto {
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.carregando, .vazio-hist {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+
+.hist-acoes { display: flex; gap: 4px; }
+
+.hist-acoes button {
+  background: none;
+  border: 1px solid #e8d5c0;
+  border-radius: 6px;
+  padding: 4px 7px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.hist-acoes button:hover { background: #f5ede3; }
+.hist-acoes .btn-excluir:hover { background: #fee2e2; border-color: #fca5a5; }
+
+.badge-naovisto {
+  font-size: 0.75rem;
+  color: #ccc;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500; padding: 1rem;
+}
+
+.modal-confirm {
+  background: white;
+  border-radius: 14px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-confirm h3 { margin: 0 0 0.75rem; color: #3d2b1f; }
+.modal-confirm p  { font-size: 0.9rem; color: #555; margin: 0 0 0.5rem; }
+
+.modal-confirm-btns {
+  display: flex; gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.btn-cancelar {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-salvar {
+  padding: 0.6rem 1.2rem;
+  background: #c0855a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-salvar:disabled { opacity: 0.6; cursor: not-allowed; }
