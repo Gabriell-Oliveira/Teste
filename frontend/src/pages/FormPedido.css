@@ -1,10 +1,7 @@
-.form-pedido-page {
-  min-height: 100vh;
-  background: #faf7f4;
-}
+.form-pedido-page { min-height: 100vh; background: #faf7f4; }
 
 .form-container {
-  max-width: 760px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 1.5rem;
 }
@@ -18,67 +15,71 @@
 .form-section {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .form-section h2 {
-  color: #3d2b1f;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  color: #5a3e2b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   margin: 0 0 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f0e4d4;
+  border-bottom: 1px solid #f0e4d4;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-@media (max-width: 540px) {
-  .form-row { grid-template-columns: 1fr; }
-}
+@media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+.form-row.quad { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 500px) { .form-row.quad { grid-template-columns: 1fr 1fr; } }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 4px;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #5a3e2b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 0.65rem 0.9rem;
+  padding: 0.6rem 0.8rem;
   border: 2px solid #e8d5c0;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   outline: none;
   transition: border-color 0.2s;
+  background: white;
+  color: #3d2b1f;
   font-family: inherit;
 }
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus {
-  border-color: #c0855a;
-}
+.form-group textarea:focus { border-color: #c0855a; }
 
-.hint {
-  font-size: 0.8rem;
-  color: #888;
-}
+.hint { font-size: 0.75rem; color: #aaa; }
 
+/* Serviços */
 .servicos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.5rem;
 }
 
@@ -86,97 +87,22 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 0.75rem;
   border: 2px solid #e8d5c0;
   border-radius: 8px;
   background: white;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   text-align: left;
-  gap: 2px;
 }
 
-.servico-btn span {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #333;
-}
+.servico-btn span { font-size: 0.85rem; color: #3d2b1f; font-weight: 500; }
+.servico-btn small { font-size: 0.75rem; color: #888; }
+.servico-btn:hover { border-color: #c0855a; background: #faf7f4; }
+.servico-btn.selecionado { border-color: #c0855a; background: #f5ede3; }
+.servico-btn.selecionado span { color: #5a3e2b; font-weight: 700; }
 
-.servico-btn small {
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.servico-btn:hover {
-  border-color: #c0855a;
-}
-
-.servico-btn.selecionado {
-  background: #c0855a;
-  border-color: #c0855a;
-}
-
-.servico-btn.selecionado span,
-.servico-btn.selecionado small {
-  color: white;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #5a3e2b;
-  margin-top: 0.5rem;
-}
-
-.resumo {
-  background: #f0e4d4;
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  font-size: 0.9rem;
-  color: #3d2b1f;
-  margin-bottom: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
-
-.btn-cancelar {
-  padding: 0.75rem 1.5rem;
-  background: white;
-  border: 2px solid #e8d5c0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancelar:hover {
-  border-color: #c0855a;
-}
-
-.btn-salvar {
-  padding: 0.75rem 1.5rem;
-  background: #c0855a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-salvar:hover:not(:disabled) { background: #a06840; }
-.btn-salvar:disabled { opacity: 0.6; cursor: not-allowed; }
-
-/* ── Peças individuais no formulário ── */
+/* Peças */
 .peca-form {
   border: 2px solid #e8d5c0;
   border-radius: 10px;
@@ -194,12 +120,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── Nome da peça ── */
+.peca-nome-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.peca-num {
   font-weight: 700;
   font-size: 0.9rem;
   color: #3d2b1f;
+  white-space: nowrap;
 }
 
+.peca-nome-input {
+  flex: 1;
+  border: 1px solid #e8d5c0;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.82rem;
+  color: #3d2b1f;
+  background: white;
+  outline: none;
+  min-width: 0;
+  font-family: inherit;
+}
+
+.peca-nome-input:focus { border-color: #c0855a; }
+.peca-nome-input::placeholder { color: #bbb; }
+
+/* Botão urgente */
 .btn-urgente-toggle {
   padding: 0.3rem 0.75rem;
   border: 2px solid #e8d5c0;
@@ -210,17 +168,68 @@
   cursor: pointer;
   transition: all 0.2s;
   color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.btn-urgente-toggle.ativo {
-  background: #ef4444;
-  border-color: #ef4444;
+.btn-urgente-toggle.ativo { background: #ef4444; border-color: #ef4444; color: white; }
+.btn-urgente-toggle:hover:not(.ativo) { border-color: #ef4444; color: #ef4444; }
+
+/* Resumo */
+.resumo {
+  background: white;
+  border-radius: 10px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+  color: #555;
+  margin-bottom: 1rem;
+  border: 1px solid #f0e4d4;
+}
+
+/* Ações */
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-bottom: 2rem;
+}
+
+.btn-cancelar {
+  padding: 0.7rem 1.5rem;
+  border: 2px solid #e8d5c0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.btn-cancelar:hover { background: #f5ede3; }
+
+.btn-salvar {
+  padding: 0.7rem 1.5rem;
+  background: #c0855a;
   color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.btn-urgente-toggle:hover:not(.ativo) {
-  border-color: #ef4444;
-  color: #ef4444;
+.btn-salvar:hover:not(:disabled) { background: #a06840; }
+.btn-salvar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Checkbox */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #3d2b1f;
 }
 
 /* Autocomplete */
@@ -264,40 +273,4 @@
   font-weight: 600;
   color: #166534;
   margin-left: 6px;
-}
-
-/* Nome da peça */
-.peca-nome-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.peca-num {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #3d2b1f;
-  white-space: nowrap;
-}
-
-.peca-nome-input {
-  flex: 1;
-  border: 1px solid #e8d5c0;
-  border-radius: 6px;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.82rem;
-  color: #3d2b1f;
-  background: white;
-  outline: none;
-  min-width: 0;
-}
-
-.peca-nome-input:focus {
-  border-color: #c0855a;
-}
-
-.peca-nome-input::placeholder {
-  color: #bbb;
 }

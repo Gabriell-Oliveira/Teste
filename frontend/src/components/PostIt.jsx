@@ -5,7 +5,12 @@ import './PostIt.css'
 
 function formatarData(dataISO) {
   if (!dataISO) return null
-  return new Date(dataISO).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
+  // Corrige fuso horário — MongoDB salva em UTC, Brasil é UTC-3
+  return new Date(dataISO).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Fortaleza'
+  })
 }
 
 function linkWhatsApp(telefone, nomeCliente, pedidoId) {

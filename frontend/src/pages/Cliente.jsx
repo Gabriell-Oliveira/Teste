@@ -16,7 +16,7 @@ const ETAPAS = ['pendente', 'fazendo', 'concluido']
 function formatarData(dataISO) {
   if (!dataISO) return null
   return new Date(dataISO).toLocaleString('pt-BR', {
-    weekday: 'long', day: '2-digit', month: 'long',
+    weekday: 'long', day: '2-digit', month: 'long', timeZone: 'America/Fortaleza',
     hour: '2-digit', minute: '2-digit'
   })
 }
@@ -52,7 +52,7 @@ export default function Cliente() {
 
   if (erro) return (
     <div className="cpage">
-      <div className="cpage-logo">🧵 Ateliê Mary</div>
+      <div className="cpage-logo">🧵 Ateliê</div>
       <div className="ccard">
         <div className="cerro">
           <span>😕</span>
@@ -65,7 +65,7 @@ export default function Cliente() {
 
   if (!pedido) return (
     <div className="cpage">
-      <div className="cpage-logo">🧵 Ateliê Mary</div>
+      <div className="cpage-logo">🧵 Ateliê</div>
       <div className="cloading">Carregando seu pedido...</div>
     </div>
   )
@@ -77,7 +77,7 @@ export default function Cliente() {
 
   return (
     <div className="cpage">
-      <div className="cpage-logo">🧵 Ateliê Mary</div>
+      <div className="cpage-logo">🧵 Ateliê</div>
 
       <div className="ccard" style={{ borderTop: `5px solid ${cfg.cor}` }}>
 

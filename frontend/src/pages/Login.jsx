@@ -31,7 +31,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-icon">🧵</div>
-        <h1>Ateliê</h1>
+        <h1>Ateliê Mary</h1>
         <p>Área da costureira</p>
         <form onSubmit={handleLogin}>
           <input
