@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand" onClick={() => navigate('/')}>🧵 Ateliê</div>
+      <div className="navbar-brand" onClick={() => navigate('/')}>🧵 Ateliê Mary</div>
       <div className="navbar-links">
         {LINKS.map(l => (
           <button

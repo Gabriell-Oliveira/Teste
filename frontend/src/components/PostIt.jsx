@@ -115,7 +115,7 @@ export default function PostIt({ pedido, onAtualizarStatus, onEditar }) {
             {pedido.pecas.slice(0, expandido ? undefined : 2).map((peca, i) => (
               <div key={i} className={`peca-item ${peca.urgente ? 'urgente' : ''}`}>
                 <div className="peca-header">
-                  <span>🧥 Peça {i+1}</span>
+                  <span>🧥 {peca.nome ? peca.nome : `Peça ${i + 1}`}</span>
                   {peca.urgente && <span className="badge-urgente-peca">⚡</span>}
                 </div>
                 <div className="peca-servicos">

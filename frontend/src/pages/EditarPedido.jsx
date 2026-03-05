@@ -154,7 +154,17 @@ export default function EditarPedido() {
             {pecas.map((peca, idx) => (
               <div key={idx} className={`peca-form ${peca.urgente ? 'peca-urgente' : ''}`}>
                 <div className="peca-form-header">
-                  <span>🧥 Peça {idx + 1}</span>
+                  <div className="peca-nome-wrap">
+                    <span className="peca-num">🧥 Peça {idx + 1}</span>
+                    <input
+                      className="peca-nome-input"
+                      placeholder="Nome opcional (ex: calça, blusa...)"
+                      value={peca.nome || ''}
+                      onChange={e => setPecas(prev => prev.map((p, i) =>
+                        i === idx ? { ...p, nome: e.target.value } : p
+                      ))}
+                    />
+                  </div>
                   <button type="button"
                     className={`btn-urgente-toggle ${peca.urgente ? 'ativo' : ''}`}
                     onClick={() => toggleUrgentePeca(idx)}>
