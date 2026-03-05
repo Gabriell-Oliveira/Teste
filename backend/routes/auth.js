@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 // Senha vem do .env
-const SENHA = process.env.SENHA_COSTUREIRA || '1234'
+const SENHA = process.env.SENHA_COSTUREIRA || 'Maria05'
 
 router.post('/login', (req, res) => {
   const { senha } = req.body
