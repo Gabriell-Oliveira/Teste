@@ -8,7 +8,7 @@ import axios from 'axios'
 // URL base do backend. Durante o desenvolvimento
 // o Node roda na porta 3001.
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api'
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 })
 
 export default api
