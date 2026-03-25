@@ -48,3 +48,24 @@
 .btn-status:hover { background: rgba(0,0,0,0.16); transform: scale(1.02); }
 .btn-anterior { text-align: left; }
 .btn-proximo { text-align: right; background: rgba(0,0,0,0.12); font-weight: 700; }
+.postit-link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.postit-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 5px;
+  border-radius: 4px;
+  transition: background 0.15s;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.postit-whatsapp-btn:hover {
+  background: rgba(0,0,0,0.1);
+}
