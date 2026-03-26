@@ -22,10 +22,11 @@ const SERVICOS_PADRAO = [
 // GET /api/servicos — lista todos ativos
 router.get('/', async (req, res) => {
   try {
-    let servicos = await Servico.find({ ativo: true }).sort('nome')
+    // ← MUDANÇA: aceita ?todos=true para retornar ativos e inativos
+    const filtro = req.query.todos === 'true' ? {} : { ativo: true }
+    let servicos = await Servico.find(filtro).sort('nome')
 
-    // Se banco vazio, popula com padrões
-    if (servicos.length === 0) {
+    if (servicos.length === 0 && req.query.todos !== 'true') {
       servicos = await Servico.insertMany(SERVICOS_PADRAO)
     }
 

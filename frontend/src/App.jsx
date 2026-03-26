@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login        from './pages/Login'
 import Dashboard    from './pages/Dashboard'
 import Gerenciamento from './pages/Gerenciamento'
+import GerenciamentoServicos from './pages/GerenciamentoServicos' 
 import NovoPedido   from './pages/NovoPedido'
 import EditarPedido from './pages/EditarPedido'
 import Cliente      from './pages/Cliente'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/login"      element={<Login />} />
         <Route path="/"           element={<RotaProtegida><Dashboard /></RotaProtegida>} />
         <Route path="/gerenciamento" element={<RotaProtegida><Gerenciamento /></RotaProtegida>} />
+        <Route path="/gerenciamento/servicos" element={<RotaProtegida><GerenciamentoServicos /></RotaProtegida>} />
         <Route path="/clientes"   element={<RotaProtegida><Clientes /></RotaProtegida>} />
         <Route path="/historico"  element={<RotaProtegida><Historico /></RotaProtegida>} />
         <Route path="/novo-pedido"    element={<RotaProtegida><NovoPedido /></RotaProtegida>} />

@@ -4,6 +4,7 @@ import './Navbar.css'
 const LINKS = [
   { path: '/',             label: '📋 Mural'      },
   { path: '/gerenciamento',label: '📁 Pedidos'    },
+  { path: '/gerenciamento/servicos',label: '✂️ Serviços' },
   { path: '/clientes',     label: '👥 Clientes'   },
   { path: '/historico',    label: '📦 Histórico'  },
 ]
