@@ -9,22 +9,24 @@ function criarPeca() { return { nome: '', servicos: [], urgente: false } }
 export default function NovoPedido() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [servicos, setServicos]     = useState([])
-  const [salvando, setSalvando]     = useState(false)
-  const [sugestoes, setSugestoes]   = useState([])
+  const [servicos, setServicos] = useState([])
+  const [salvando, setSalvando] = useState(false)
+  const [sugestoes, setSugestoes] = useState([])
   const [mostrarSug, setMostrarSug] = useState(false)
   const buscaRef = useRef(null)
 
   const [form, setForm] = useState({
-    nomeCliente:    searchParams.get('nome') || '',
-    telefone:       searchParams.get('tel')  || '',
-    clienteId:      searchParams.get('clienteId') || null,
+    nomeCliente: searchParams.get('nome') || '',
+    telefone: searchParams.get('tel') || '',
+    clienteId: searchParams.get('clienteId') || null,
     quantidadePecas: 1,
-    observacoes:    '',
-    dataEntrega:    '',
-    prioridade:     false,
-    status:         'pendente',
-    valorTotal:     0,
+    observacoes: '',
+    dataEntrega: '',
+    prioridade: false,
+    status: 'pendente',
+    valorTotal: 0,
+    desconto: 0,   // ← ADICIONAR
+    pagamento: { chavePix: '', linkMercadoPago: '' },
   })
 
   const [pecas, setPecas] = useState([criarPeca()])
@@ -42,11 +44,19 @@ export default function NovoPedido() {
   }, [form.quantidadePecas])
 
   // Recalcula valor total
+  // useEffect 1: recalcula subtotal quando pecas mudam
   useEffect(() => {
-    const total = pecas.reduce((acc, p) =>
-      acc + p.servicos.reduce((s, srv) => s + (srv.preco || 0), 0), 0)
-    setForm(f => ({ ...f, valorTotal: total }))
+    const subtotal = pecas.reduce((acc, p) =>
+      acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
+    setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
   }, [pecas])
+
+  // useEffect 2: recalcula valorTotal quando desconto muda
+  useEffect(() => {
+    setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
+  }, [form?.desconto])
+  // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
+  // ou use useRef para guardar o valorOriginal fora do form.
 
   // Autocomplete de clientes
   async function buscarClientes(nome) {
@@ -207,6 +217,18 @@ export default function NovoPedido() {
                 <small className="hint">Calculado automaticamente. Pode editar.</small>
               </div>
               <div className="form-group">
+                <label>Desconto (R$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.desconto || 0}
+                  onChange={e => setForm(f => ({ ...f, desconto: Number(e.target.value) }))}
+                  placeholder="0.00"
+                />
+                <small className="hint">Deixe 0 para sem desconto.</small>
+              </div>
+              <div className="form-group">
                 <label>Status inicial</label>
                 <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                   <option value="pendente">🟡 Pendente</option>
@@ -227,6 +249,35 @@ export default function NovoPedido() {
             {totalServicos} serviço(s) · <strong>R$ {Number(form.valorTotal).toFixed(2)}</strong>
             {form.prioridade && ' · ⚡ Tem peça urgente'}
           </div>
+
+          {/* Adicionar uma nova section no formulário, antes de form-actions: */}
+          <section className="form-section">
+            <h2>💳 Dados de Pagamento</h2>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Chave Pix</label>
+                <input
+                  value={form.pagamento?.chavePix || ''}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    pagamento: { ...f.pagamento, chavePix: e.target.value }
+                  }))}
+                  placeholder="CPF, e-mail, telefone ou chave aleatória"
+                />
+              </div>
+              <div className="form-group">
+                <label>Link Mercado Pago</label>
+                <input
+                  value={form.pagamento?.linkMercadoPago || ''}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    pagamento: { ...f.pagamento, linkMercadoPago: e.target.value }
+                  }))}
+                  placeholder="https://mpago.la/..."
+                />
+              </div>
+            </div>
+          </section>
 
           <div className="form-actions">
             <button type="button" className="btn-cancelar" onClick={() => navigate('/')}>Cancelar</button>

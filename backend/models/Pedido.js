@@ -44,7 +44,14 @@ const PedidoSchema = new mongoose.Schema({
 
   // Valor e prazo
   valorTotal:       { type: Number, default: 0 },
+  valorOriginal: { type: Number, default: 0 },   // ← ADICIONAR
+  desconto:      { type: Number, default: 0 },   // ← ADICIONAR (valor em R$)
+  pagamento: {
+  chavePix:       { type: String, default: '' },
+  linkMercadoPago:{ type: String, default: '' },
+  },
   dataEntrega:      { type: Date, default: null },
+
 
   // Status
   // pendente → fazendo → concluido → entregue

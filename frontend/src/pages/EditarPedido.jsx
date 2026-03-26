@@ -12,11 +12,11 @@ function getServicoId(s) { return s._id || s.id || s.servicoId }
 export default function EditarPedido() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [servicos, setServicos]   = useState([])
-  const [salvando, setSalvando]   = useState(false)
+  const [servicos, setServicos] = useState([])
+  const [salvando, setSalvando] = useState(false)
   const [carregando, setCarregando] = useState(true)
-  const [form, setForm]           = useState(null)
-  const [pecas, setPecas]         = useState([criarPeca()])
+  const [form, setForm] = useState(null)
+  const [pecas, setPecas] = useState([criarPeca()])
 
   useEffect(() => {
     if (!id || id === 'undefined') {
@@ -41,14 +41,19 @@ export default function EditarPedido() {
       }
 
       setForm({
-        nomeCliente:     pedido.nomeCliente    || '',
-        telefone:        pedido.telefone       || '',
+        nomeCliente: pedido.nomeCliente || '',
+        telefone: pedido.telefone || '',
         quantidadePecas: pedido.quantidadePecas || 1,
-        observacoes:     pedido.observacoes    || '',
-        dataEntrega:     pedido.dataEntrega    ? new Date(pedido.dataEntrega).toISOString().slice(0,16) : '',
-        prioridade:      pedido.prioridade     || false,
-        status:          pedido.status         || 'pendente',
-        valorTotal:      pedido.valorTotal     || 0,
+        observacoes: pedido.observacoes || '',
+        dataEntrega: pedido.dataEntrega ? new Date(pedido.dataEntrega).toISOString().slice(0, 16) : '',
+        prioridade: pedido.prioridade || false,
+        status: pedido.status || 'pendente',
+        valorTotal: pedido.valorTotal || 0,
+        desconto: 0,   // ← ADICIONAR
+        pagamento: {
+          chavePix: pedido.pagamento?.chavePix || '',
+          linkMercadoPago: pedido.pagamento?.linkMercadoPago || '',
+        },
       })
       setCarregando(false)
     }).catch(() => navigate('/'))
@@ -66,12 +71,19 @@ export default function EditarPedido() {
   }, [form?.quantidadePecas])
 
   // Recalcula valor total
+  // useEffect 1: recalcula subtotal quando pecas mudam
   useEffect(() => {
-    if (!form) return
-    const total = pecas.reduce((acc, p) =>
+    const subtotal = pecas.reduce((acc, p) =>
       acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
-    setForm(f => ({ ...f, valorTotal: total }))
+    setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
   }, [pecas])
+
+  // useEffect 2: recalcula valorTotal quando desconto muda
+  useEffect(() => {
+    setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
+  }, [form?.desconto])
+  // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
+  // ou use useRef para guardar o valorOriginal fora do form.
 
   function toggleServicoPeca(pecaIdx, servico) {
     const sid = getServicoId(servico)
@@ -108,7 +120,7 @@ export default function EditarPedido() {
   if (carregando) return (
     <div className="form-pedido-page">
       <Navbar />
-      <div style={{textAlign:'center', padding:'3rem', color:'#888'}}>Carregando pedido...</div>
+      <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Carregando pedido...</div>
     </div>
   )
 
@@ -200,6 +212,18 @@ export default function EditarPedido() {
                 <small className="hint">Calculado automaticamente. Pode editar.</small>
               </div>
               <div className="form-group">
+                <label>Desconto (R$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.desconto || 0}
+                  onChange={e => setForm(f => ({ ...f, desconto: Number(e.target.value) }))}
+                  placeholder="0.00"
+                />
+                <small className="hint">Deixe 0 para sem desconto.</small>
+              </div>
+              <div className="form-group">
                 <label>Status</label>
                 <select value={form.status}
                   onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
@@ -222,6 +246,35 @@ export default function EditarPedido() {
                 onChange={e => setForm(f => ({ ...f, prioridade: e.target.checked }))} />
               ⚡ Marcar como urgente/prioridade
             </label>
+          </section>
+
+          {/* Adicionar uma nova section no formulário, antes de form-actions: */}
+          <section className="form-section">
+            <h2>💳 Dados de Pagamento</h2>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Chave Pix</label>
+                <input
+                  value={form.pagamento?.chavePix || ''}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    pagamento: { ...f.pagamento, chavePix: e.target.value }
+                  }))}
+                  placeholder="CPF, e-mail, telefone ou chave aleatória"
+                />
+              </div>
+              <div className="form-group">
+                <label>Link Mercado Pago</label>
+                <input
+                  value={form.pagamento?.linkMercadoPago || ''}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    pagamento: { ...f.pagamento, linkMercadoPago: e.target.value }
+                  }))}
+                  placeholder="https://mpago.la/..."
+                />
+              </div>
+            </div>
           </section>
 
           <div className="form-actions">
