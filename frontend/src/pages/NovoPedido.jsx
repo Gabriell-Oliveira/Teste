@@ -4,6 +4,18 @@ import api from '../api'
 import Navbar from '../components/Navbar'
 import './FormPedido.css'
 
+// Cole esta função no topo de cada arquivo que precisar (abaixo dos imports)
+function mascararTelefone(valor) {
+  // Remove tudo que não for dígito
+  const nums = valor.replace(/\D/g, '').slice(0, 11)
+  if (nums.length === 0) return ''
+  if (nums.length <= 2) return `(${nums}`
+  if (nums.length <= 3) return `(${nums.slice(0,2)}) ${nums.slice(2)}`
+  if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2,3)}.${nums.slice(3)}`
+  if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,3)}.${nums.slice(3,7)}-${nums.slice(7)}`
+  return valor
+}
+
 function criarPeca() { return { nome: '', servicos: [], urgente: false } }
 
 export default function NovoPedido() {
@@ -43,20 +55,33 @@ export default function NovoPedido() {
     )
   }, [form.quantidadePecas])
 
-  // Recalcula valor total
-  // useEffect 1: recalcula subtotal quando pecas mudam
+  // // Recalcula valor total
+  // // useEffect 1: recalcula subtotal quando pecas mudam
+  // useEffect(() => {
+  //   const subtotal = pecas.reduce((acc, p) =>
+  //     acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
+  //   setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
+  // }, [pecas])
+
+  // // useEffect 2: recalcula valorTotal quando desconto muda
+  // useEffect(() => {
+  //   setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
+  // }, [form?.desconto])
+  // // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
+  // // ou use useRef para guardar o valorOriginal fora do form.
+
+  // Mesmos useEffects com o guard, por segurança:
   useEffect(() => {
+    if (!form) return
     const subtotal = pecas.reduce((acc, p) =>
       acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
     setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
-  }, [pecas])
+  }, [pecas]) // eslint-disable-line
 
-  // useEffect 2: recalcula valorTotal quando desconto muda
   useEffect(() => {
+    if (!form) return
     setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
-  }, [form?.desconto])
-  // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
-  // ou use useRef para guardar o valorOriginal fora do form.
+  }, [form?.desconto]) // eslint-disable-line
 
   // Autocomplete de clientes
   async function buscarClientes(nome) {
@@ -146,9 +171,15 @@ export default function NovoPedido() {
               </div>
               <div className="form-group">
                 <label>Telefone (WhatsApp)</label>
-                <input value={form.telefone}
+                {/* <input value={form.telefone}
                   onChange={e => setForm(f => ({ ...f, telefone: e.target.value }))}
-                  placeholder="(85) 99999-9999" />
+                  placeholder="(85) 99999-9999" /> */}
+                  {/* Substitua o input de telefone por este: */}
+                <input
+                  value={form.telefone}
+                  onChange={e => setForm(f => ({ ...f, telefone: mascararTelefone(e.target.value) }))}
+                  placeholder="(85) 9.9999-9999"
+                />
               </div>
             </div>
 

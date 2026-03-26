@@ -4,6 +4,18 @@ import api from '../api'
 import Navbar from '../components/Navbar'
 import './Clientes.css'
 
+// Cole esta função no topo de cada arquivo que precisar (abaixo dos imports)
+function mascararTelefone(valor) {
+  // Remove tudo que não for dígito
+  const nums = valor.replace(/\D/g, '').slice(0, 11)
+  if (nums.length === 0) return ''
+  if (nums.length <= 2) return `(${nums}`
+  if (nums.length <= 3) return `(${nums.slice(0,2)}) ${nums.slice(2)}`
+  if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2,3)}.${nums.slice(3)}`
+  if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,3)}.${nums.slice(3,7)}-${nums.slice(7)}`
+  return valor
+}
+
 export default function Clientes() {
   const [clientes, setClientes]   = useState([])
   const [busca, setBusca]         = useState('')
@@ -248,7 +260,13 @@ export default function Clientes() {
                 </div>
                 <div className="form-group">
                   <label>Telefone (WhatsApp)</label>
-                  <input value={form.telefone} onChange={e => setForm(f => ({...f, telefone: e.target.value}))} placeholder="(85) 99999-9999" />
+                  {/* <input value={form.telefone} onChange={e => setForm(f => ({...f, telefone: e.target.value}))} placeholder="(85) 99999-9999" /> */}
+                  {/* Substitua o input de telefone no modal por este: */}
+                  <input
+                    value={form.telefone}
+                    onChange={e => setForm(f => ({...f, telefone: mascararTelefone(e.target.value)}))}
+                    placeholder="(85) 9.9999-9999"
+                  />
                 </div>
               </div>
 

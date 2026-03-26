@@ -111,12 +111,12 @@
 .clinha.ativa { background: #86efac; }
 
 /* Detalhes */
-.cdetalhes {
+/* .cdetalhes {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-top: 1px solid #f0e4d4;
   border-bottom: 1px solid #f0e4d4;
-}
+} */
 
 .cdetalhe {
   padding: 0.85rem 1.25rem;
@@ -277,3 +277,51 @@
 }
 
 .btn-cartao:hover { background: #0284c7; }
+
+/* Adicione ao final de Cliente.css */
+.cvalor-total {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.85rem 1.5rem;
+  border-top: 1px solid #f0e4d4;
+  border-bottom: 1px solid #f0e4d4;
+  gap: 1rem;
+}
+
+.cvalor-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3d2b1f;
+  white-space: nowrap;
+}
+
+.cvalor-direita {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.cvalor-original {
+  font-size: 0.85rem;
+  color: #aaa;
+  text-decoration: line-through;
+}
+
+.cvalor-final {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #3d2b1f;
+}
+
+.cvalor-final.com-desconto {
+  color: #16a34a;
+}
+
+.cvalor-desconto-msg {
+  font-size: 0.78rem;
+  color: #16a34a;
+  font-weight: 600;
+}

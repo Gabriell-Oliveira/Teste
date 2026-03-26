@@ -178,7 +178,7 @@ export default function Cliente() {
           </div>
         )}
 
-        {/* Valor total — agora vem APÓS os serviços, com desconto */}
+        {/* Valor total — agora vem APÓS os serviços, com desconto
         <div className="cdetalhes">
           <div className="cdetalhe full" style={{ borderTop: '1px solid #f0e4d4' }}>
             <label>
@@ -199,6 +199,35 @@ export default function Cliente() {
             ) : (
               <span className="cdetalhe-value">💰 R$ {Number(pedido.valorTotal || 0).toFixed(2)}</span>
             )}
+          </div>
+        </div> */}
+
+        {/* Valor total — layout horizontal tipo linha de serviço */}
+        <div className="cdetalhes">
+          <div className="cdetalhe full" style={{ borderTop: '1px solid #f0e4d4' }}>
+            <label>
+              <h3>Valor total</h3>
+              </label>
+          <div className="cvalor-direita">
+            {pedido.desconto > 0 ? (
+              <>
+                <span className="cvalor-original">
+                  R$ {Number(pedido.valorOriginal || (pedido.valorTotal + pedido.desconto)).toFixed(2)}
+                </span>
+                <span className="cvalor-final">
+                  R$ {Number(pedido.valorTotal).toFixed(2)}
+                </span>
+                <span className="cvalor-desconto-msg">
+                  🎉 {pedido.nomeCliente.split(' ')[0]} recebeu um desconto especial!
+                </span>
+              </>
+            ) : (
+              // <span className="cvalor-final">💰 R$ {Number(pedido.valorTotal || 0).toFixed(2)}</span>
+              <span className={`cvalor-final ${pedido.desconto > 0 ? 'com-desconto' : ''}`}>
+                R$ {Number(pedido.valorTotal).toFixed(2)}
+              </span>
+            )}
+            </div>
           </div>
         </div>
 
