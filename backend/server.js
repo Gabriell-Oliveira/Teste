@@ -17,6 +17,7 @@ app.use('/api/auth',     require('./routes/auth'))
 app.use('/api/servicos', require('./routes/servicos'))
 app.use('/api/clientes', require('./routes/clientes'))
 app.use('/api/pedidos',  require('./routes/pedidos'))
+app.use('/api/config',   require('./routes/config'))   // ← NOVO: chave Pix global
 
 app.get('/api/health', (req, res) => res.json({
   status: 'ok',

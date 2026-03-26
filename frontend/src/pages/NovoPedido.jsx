@@ -4,9 +4,7 @@ import api from '../api'
 import Navbar from '../components/Navbar'
 import './FormPedido.css'
 
-// Cole esta função no topo de cada arquivo que precisar (abaixo dos imports)
 function mascararTelefone(valor) {
-  // Remove tudo que não for dígito
   const nums = valor.replace(/\D/g, '').slice(0, 11)
   if (nums.length === 0) return ''
   if (nums.length <= 2) return `(${nums}`
@@ -25,25 +23,30 @@ export default function NovoPedido() {
   const [salvando, setSalvando] = useState(false)
   const [sugestoes, setSugestoes] = useState([])
   const [mostrarSug, setMostrarSug] = useState(false)
+  const [chavePix, setChavePix] = useState('')   // chave global do sistema
   const buscaRef = useRef(null)
 
   const [form, setForm] = useState({
-    nomeCliente: searchParams.get('nome') || '',
-    telefone: searchParams.get('tel') || '',
-    clienteId: searchParams.get('clienteId') || null,
+    nomeCliente:    searchParams.get('nome') || '',
+    telefone:       searchParams.get('tel')  || '',
+    clienteId:      searchParams.get('clienteId') || null,
     quantidadePecas: 1,
-    observacoes: '',
-    dataEntrega: '',
-    prioridade: false,
-    status: 'pendente',
-    valorTotal: 0,
-    desconto: 0,   // ← ADICIONAR
-    pagamento: { chavePix: '', linkMercadoPago: '' },
+    observacoes:    '',
+    dataEntrega:    '',
+    prioridade:     false,
+    status:         'pendente',
+    valorTotal:     0,
+    desconto:       0,
+    // chavePix no pedido fica vazia por padrão (usa a global)
+    pagamento: { chavePix: '' },
   })
 
   const [pecas, setPecas] = useState([criarPeca()])
 
-  useEffect(() => { api.get('/servicos').then(r => setServicos(r.data)) }, [])
+  useEffect(() => {
+    api.get('/servicos').then(r => setServicos(r.data))
+    api.get('/config').then(r => setChavePix(r.data.chavePix || ''))
+  }, [])
 
   // Sincroniza array de peças com quantidade
   useEffect(() => {
@@ -55,35 +58,18 @@ export default function NovoPedido() {
     )
   }, [form.quantidadePecas])
 
-  // // Recalcula valor total
-  // // useEffect 1: recalcula subtotal quando pecas mudam
-  // useEffect(() => {
-  //   const subtotal = pecas.reduce((acc, p) =>
-  //     acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
-  //   setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
-  // }, [pecas])
-
-  // // useEffect 2: recalcula valorTotal quando desconto muda
-  // useEffect(() => {
-  //   setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
-  // }, [form?.desconto])
-  // // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
-  // // ou use useRef para guardar o valorOriginal fora do form.
-
-  // Mesmos useEffects com o guard, por segurança:
+  // Recalcula subtotal quando peças mudam
   useEffect(() => {
-    if (!form) return
     const subtotal = pecas.reduce((acc, p) =>
       acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
     setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
   }, [pecas]) // eslint-disable-line
 
+  // Recalcula valorTotal quando desconto muda
   useEffect(() => {
-    if (!form) return
     setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
   }, [form?.desconto]) // eslint-disable-line
 
-  // Autocomplete de clientes
   async function buscarClientes(nome) {
     if (nome.length < 2) { setSugestoes([]); return }
     const res = await api.get('/clientes', { params: { busca: nome } })
@@ -138,13 +124,15 @@ export default function NovoPedido() {
         <h1>✂️ Novo Pedido</h1>
         <form onSubmit={salvar}>
 
+          {/* Dados da cliente */}
           <section className="form-section">
             <h2>👤 Dados da Cliente</h2>
-
-            {/* Campo nome com autocomplete */}
             <div className="form-row">
               <div className="form-group" style={{ position: 'relative' }}>
-                <label>Nome * {form.clienteId && <span className="badge-cadastrada">✓ Cliente cadastrada</span>}</label>
+                <label>
+                  Nome *{' '}
+                  {form.clienteId && <span className="badge-cadastrada">✓ Cadastrada</span>}
+                </label>
                 <input
                   ref={buscaRef}
                   required
@@ -157,7 +145,6 @@ export default function NovoPedido() {
                   placeholder="Nome da cliente"
                   autoComplete="off"
                 />
-                {/* Dropdown de sugestões */}
                 {mostrarSug && sugestoes.length > 0 && (
                   <div className="autocomplete-dropdown">
                     {sugestoes.map(c => (
@@ -171,10 +158,6 @@ export default function NovoPedido() {
               </div>
               <div className="form-group">
                 <label>Telefone (WhatsApp)</label>
-                {/* <input value={form.telefone}
-                  onChange={e => setForm(f => ({ ...f, telefone: e.target.value }))}
-                  placeholder="(85) 99999-9999" /> */}
-                  {/* Substitua o input de telefone por este: */}
                 <input
                   value={form.telefone}
                   onChange={e => setForm(f => ({ ...f, telefone: mascararTelefone(e.target.value) }))}
@@ -186,7 +169,8 @@ export default function NovoPedido() {
             <div className="form-row">
               <div className="form-group">
                 <label>Qtd. de Peças *</label>
-                <input type="number" min="1" max="20" required value={form.quantidadePecas}
+                <input type="number" min="1" max="20" required
+                  value={form.quantidadePecas}
                   onChange={e => setForm(f => ({ ...f, quantidadePecas: Number(e.target.value) }))} />
               </div>
               <div className="form-group">
@@ -238,6 +222,7 @@ export default function NovoPedido() {
             ))}
           </section>
 
+          {/* Valor */}
           <section className="form-section">
             <h2>💰 Valor e Detalhes</h2>
             <div className="form-row">
@@ -249,14 +234,10 @@ export default function NovoPedido() {
               </div>
               <div className="form-group">
                 <label>Desconto (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
+                <input type="number" step="0.01" min="0"
                   value={form.desconto || 0}
                   onChange={e => setForm(f => ({ ...f, desconto: Number(e.target.value) }))}
-                  placeholder="0.00"
-                />
+                  placeholder="0.00" />
                 <small className="hint">Deixe 0 para sem desconto.</small>
               </div>
               <div className="form-group">
@@ -275,40 +256,32 @@ export default function NovoPedido() {
             </div>
           </section>
 
+          {/* Pix por pedido (opcional — substitui o global) */}
+          <section className="form-section">
+            <h2>💳 Chave Pix (opcional)</h2>
+            <p className="hint" style={{ marginBottom: '0.75rem' }}>
+              {chavePix
+                ? `Chave global cadastrada: "${chavePix}". Preencha abaixo só se quiser usar uma chave diferente neste pedido.`
+                : 'Nenhuma chave Pix global configurada. Cadastre em Serviços & Configurações ou preencha abaixo.'}
+            </p>
+            <div className="form-group">
+              <label>Chave Pix do pedido</label>
+              <input
+                value={form.pagamento?.chavePix || ''}
+                onChange={e => setForm(f => ({
+                  ...f,
+                  pagamento: { chavePix: e.target.value }
+                }))}
+                placeholder="Deixe em branco para usar a chave global"
+              />
+            </div>
+          </section>
+
           <div className="resumo">
             <strong>Resumo:</strong> {form.nomeCliente || '—'} · {form.quantidadePecas} peça(s) ·{' '}
             {totalServicos} serviço(s) · <strong>R$ {Number(form.valorTotal).toFixed(2)}</strong>
-            {form.prioridade && ' · ⚡ Tem peça urgente'}
+            {form.prioridade && ' · ⚡ Urgente'}
           </div>
-
-          {/* Adicionar uma nova section no formulário, antes de form-actions: */}
-          <section className="form-section">
-            <h2>💳 Dados de Pagamento</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Chave Pix</label>
-                <input
-                  value={form.pagamento?.chavePix || ''}
-                  onChange={e => setForm(f => ({
-                    ...f,
-                    pagamento: { ...f.pagamento, chavePix: e.target.value }
-                  }))}
-                  placeholder="CPF, e-mail, telefone ou chave aleatória"
-                />
-              </div>
-              <div className="form-group">
-                <label>Link Mercado Pago</label>
-                <input
-                  value={form.pagamento?.linkMercadoPago || ''}
-                  onChange={e => setForm(f => ({
-                    ...f,
-                    pagamento: { ...f.pagamento, linkMercadoPago: e.target.value }
-                  }))}
-                  placeholder="https://mpago.la/..."
-                />
-              </div>
-            </div>
-          </section>
 
           <div className="form-actions">
             <button type="button" className="btn-cancelar" onClick={() => navigate('/')}>Cancelar</button>

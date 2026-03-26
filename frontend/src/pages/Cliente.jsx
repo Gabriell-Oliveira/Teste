@@ -4,11 +4,11 @@ import api from '../api'
 import './Cliente.css'
 
 const STATUS_CONFIG = {
-  pendente: { cor: '#fef08a', label: 'Aguardando', emoji: '⏳', desc: 'Seu pedido está aguardando para ser iniciado.' },
-  fazendo: { cor: '#93c5fd', label: 'Em andamento', emoji: '🪡', desc: 'Sua roupa está sendo consertada agora!' },
-  concluido: { cor: '#86efac', label: 'Pronto!', emoji: '✅', desc: 'Seu conserto está pronto! Pode vir buscar.' },
-  atrasado: { cor: '#fca5a5', label: 'Atrasado', emoji: '⚠️', desc: 'Houve um atraso. Entraremos em contato em breve.' },
-  entregue: { cor: '#d1d5db', label: 'Entregue', emoji: '📦', desc: 'Pedido entregue. Obrigada pela preferência!' },
+  pendente:  { cor: '#fef08a', label: 'Aguardando',    emoji: '⏳', desc: 'Seu pedido está aguardando para ser iniciado.' },
+  fazendo:   { cor: '#93c5fd', label: 'Em andamento',  emoji: '🪡', desc: 'Sua roupa está sendo consertada agora!' },
+  concluido: { cor: '#86efac', label: 'Pronto!',       emoji: '✅', desc: 'Seu conserto está pronto! Pode vir buscar.' },
+  atrasado:  { cor: '#fca5a5', label: 'Atrasado',      emoji: '⚠️', desc: 'Houve um atraso. Entraremos em contato em breve.' },
+  entregue:  { cor: '#d1d5db', label: 'Entregue',      emoji: '📦', desc: 'Pedido entregue. Obrigada pela preferência!' },
 }
 
 const ETAPAS = ['pendente', 'fazendo', 'concluido']
@@ -16,25 +16,33 @@ const ETAPAS = ['pendente', 'fazendo', 'concluido']
 function formatarData(dataISO) {
   if (!dataISO) return null
   return new Date(dataISO).toLocaleString('pt-BR', {
-    weekday: 'long', day: '2-digit', month: 'long', timeZone: 'America/Fortaleza',
+    weekday: 'long', day: '2-digit', month: 'long',
+    timeZone: 'America/Fortaleza',
     hour: '2-digit', minute: '2-digit'
   })
 }
 
 export default function Cliente() {
   const { id } = useParams()
-  const [pedido, setPedido] = useState(null)
-  const [erro, setErro] = useState(false)
+  const [pedido, setPedido]       = useState(null)
+  const [erro, setErro]           = useState(false)
   const [confirmando, setConfirmando] = useState(false)
-  const [recebido, setRecebido] = useState(false)
+  const [recebido, setRecebido]   = useState(false)
+  const [copiado, setCopiado]     = useState(false)
+  const [chavePix, setChavePix]   = useState('')
 
   useEffect(() => {
-    api.get(`/pedidos/${id}`)
-      .then(res => {
-        setPedido(res.data)
-        if (res.data.status === 'entregue') setRecebido(true)
-        // Registra visualização
-        api.post(`/pedidos/${id}/visualizado`).catch(() => { })
+    // Busca pedido e chave Pix global em paralelo
+    Promise.all([
+      api.get(`/pedidos/${id}`),
+      api.get('/config')
+    ])
+      .then(([pRes, cfgRes]) => {
+        setPedido(pRes.data)
+        if (pRes.data.status === 'entregue') setRecebido(true)
+        // Chave Pix: usa a do pedido se existir, senão a global
+        setChavePix(pRes.data.pagamento?.chavePix || cfgRes.data.chavePix || '')
+        api.post(`/pedidos/${id}/visualizado`).catch(() => {})
       })
       .catch(() => setErro(true))
   }, [id])
@@ -48,6 +56,12 @@ export default function Cliente() {
     } finally {
       setConfirmando(false)
     }
+  }
+
+  function copiarPix() {
+    navigator.clipboard.writeText(chavePix)
+    setCopiado(true)
+    setTimeout(() => setCopiado(false), 3000)
   }
 
   if (erro) return (
@@ -73,6 +87,7 @@ export default function Cliente() {
   const cfg = STATUS_CONFIG[pedido.status] || STATUS_CONFIG.pendente
   const etapaAtual = ETAPAS.indexOf(pedido.status)
   const mostrarTimeline = pedido.status !== 'atrasado' && pedido.status !== 'entregue'
+  const mostrarPix = pedido.status === 'concluido' && !recebido && chavePix
   const mostrarBotaoRecebido = pedido.status === 'concluido' && !recebido
 
   return (
@@ -116,38 +131,7 @@ export default function Cliente() {
           </div>
         )}
 
-        {/* Detalhes
-        <div className="cdetalhes">
-          <div className="cdetalhe">
-            <label>Peças</label>
-            <span className="cdetalhe-value">👗 {pedido.quantidadePecas} {pedido.quantidadePecas === 1 ? 'peça' : 'peças'}</span>
-          </div>
-          <div className="cdetalhe">
-            <label>Valor total</label>
-            <span className="cdetalhe-value">💰 R$ {Number(pedido.valorTotal || 0).toFixed(2)}</span>
-          </div>
-          {pedido.dataEntrega && (
-            <div className="cdetalhe full">
-              <label>Previsão de entrega</label>
-              <span className="cdetalhe-value">🗓️ {formatarData(pedido.dataEntrega)}</span>
-            </div>
-          )}
-        </div> */}
-
-        {/* Serviços
-        {pedido.servicos && pedido.servicos.length > 0 && (
-          <div className="cservicos">
-            <h4>✂️ Serviços incluídos</h4>
-            {pedido.servicos.map((s, i) => (
-              <div key={i} className="cservico-item">
-                <span>{s.nome}</span>
-                <span>R$ {Number(s.preco || 0).toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        )} */}
-
-        {/* Previsão de entrega — subiu para cá */}
+        {/* Previsão de entrega */}
         {pedido.dataEntrega && (
           <div className="cdetalhes">
             <div className="cdetalhe full">
@@ -161,11 +145,13 @@ export default function Cliente() {
         <div className="cdetalhes">
           <div className="cdetalhe full">
             <label>Peças</label>
-            <span className="cdetalhe-value">👗 {pedido.quantidadePecas} {pedido.quantidadePecas === 1 ? 'peça' : 'peças'}</span>
+            <span className="cdetalhe-value">
+              👗 {pedido.quantidadePecas} {pedido.quantidadePecas === 1 ? 'peça' : 'peças'}
+            </span>
           </div>
         </div>
 
-        {/* Serviços — permanece igual */}
+        {/* Serviços */}
         {pedido.servicos && pedido.servicos.length > 0 && (
           <div className="cservicos">
             <h4>✂️ Serviços incluídos</h4>
@@ -178,55 +164,28 @@ export default function Cliente() {
           </div>
         )}
 
-        {/* Valor total — agora vem APÓS os serviços, com desconto
+        {/* Valor total */}
         <div className="cdetalhes">
           <div className="cdetalhe full" style={{ borderTop: '1px solid #f0e4d4' }}>
-            <label>
-              <h3>Valor total</h3>
-            </label>
-            {pedido.desconto > 0 ? (
-              <div>
-                <span style={{ textDecoration: 'line-through', color: '#aaa', fontSize: '0.85rem', marginRight: 8 }}>
-                  R$ {Number(pedido.valorOriginal || pedido.valorTotal).toFixed(2)}
-                </span>
-                <span className="cdetalhe-value" style={{ display: 'inline', color: '#16a34a' }}>
-                  R$ {Number(pedido.valorTotal).toFixed(2)}
-                </span>
-                <div style={{ marginTop: 4, fontSize: '0.82rem', color: '#16a34a', fontWeight: 600 }}>
-                  🎉 {pedido.nomeCliente.split(' ')[0]} recebeu um desconto especial!
-                </div>
-              </div>
-            ) : (
-              <span className="cdetalhe-value">💰 R$ {Number(pedido.valorTotal || 0).toFixed(2)}</span>
-            )}
-          </div>
-        </div> */}
-
-        {/* Valor total — layout horizontal tipo linha de serviço */}
-        <div className="cdetalhes">
-          <div className="cdetalhe full" style={{ borderTop: '1px solid #f0e4d4' }}>
-            <label>
-              <h3>Valor total</h3>
-              </label>
-          <div className="cvalor-direita">
-            {pedido.desconto > 0 ? (
-              <>
-                <span className="cvalor-original">
-                  R$ {Number(pedido.valorOriginal || (pedido.valorTotal + pedido.desconto)).toFixed(2)}
-                </span>
+            <label><h3>Valor total</h3></label>
+            <div className="cvalor-direita">
+              {pedido.desconto > 0 ? (
+                <>
+                  <span className="cvalor-original">
+                    R$ {Number(pedido.valorOriginal || (pedido.valorTotal + pedido.desconto)).toFixed(2)}
+                  </span>
+                  <span className="cvalor-final">
+                    R$ {Number(pedido.valorTotal).toFixed(2)}
+                  </span>
+                  <span className="cvalor-desconto-msg">
+                    🎉 {pedido.nomeCliente.split(' ')[0]} recebeu um desconto especial!
+                  </span>
+                </>
+              ) : (
                 <span className="cvalor-final">
-                  R$ {Number(pedido.valorTotal).toFixed(2)}
+                  R$ {Number(pedido.valorTotal || 0).toFixed(2)}
                 </span>
-                <span className="cvalor-desconto-msg">
-                  🎉 {pedido.nomeCliente.split(' ')[0]} recebeu um desconto especial!
-                </span>
-              </>
-            ) : (
-              // <span className="cvalor-final">💰 R$ {Number(pedido.valorTotal || 0).toFixed(2)}</span>
-              <span className={`cvalor-final ${pedido.desconto > 0 ? 'com-desconto' : ''}`}>
-                R$ {Number(pedido.valorTotal).toFixed(2)}
-              </span>
-            )}
+              )}
             </div>
           </div>
         </div>
@@ -239,37 +198,21 @@ export default function Cliente() {
           </div>
         )}
 
-        {/* Botões de pagamento — só aparece quando pronto */}
-        {pedido.status === 'concluido' && (pedido.pagamento?.chavePix || pedido.pagamento?.linkMercadoPago) && (
+        {/* ── PAGAMENTO VIA PIX (só quando pronto) ── */}
+        {mostrarPix && (
           <div className="cpagamento">
-            <p>💳 Pague antes de buscar:</p>
-            <div className="cpagamento-btns">
-              {pedido.pagamento.chavePix && (
-                <button
-                  className="btn-pix"
-                  onClick={() => {
-                    navigator.clipboard.writeText(pedido.pagamento.chavePix)
-                    alert(`Chave Pix copiada!\n${pedido.pagamento.chavePix}`)
-                  }}
-                >
-                  📋 Copiar chave Pix
-                </button>
-              )}
-              {pedido.pagamento.linkMercadoPago && (
-                <a
-                  href={pedido.pagamento.linkMercadoPago}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-cartao"
-                >
-                  💳 Pagar com cartão
-                </a>
-              )}
+            <p>🎉 Peça pronta! Use a chave Pix abaixo para pagamento.</p>
+            <div className="cpix-box">
+              <span className="cpix-label">Chave Pix</span>
+              <span className="cpix-chave">{chavePix}</span>
+              <button className="btn-copiar-pix" onClick={copiarPix}>
+                {copiado ? '✅ Copiado!' : '📋 Copiar chave Pix'}
+              </button>
             </div>
           </div>
         )}
 
-        {/* Botão confirmar recebimento */}
+        {/* Botão confirmar recebimento
         {mostrarBotaoRecebido && (
           <div className="creceber">
             <p>Já buscou sua roupa?</p>
@@ -277,7 +220,7 @@ export default function Cliente() {
               {confirmando ? 'Confirmando...' : '📦 Confirmar que recebi'}
             </button>
           </div>
-        )}
+        )}  */}
 
         {recebido && (
           <div className="crecebido-ok">
@@ -287,6 +230,6 @@ export default function Cliente() {
 
         <p className="crodape">Dúvidas? Entre em contato com a costureira pelo WhatsApp.</p>
       </div>
-    </div >
+    </div>
   )
 }

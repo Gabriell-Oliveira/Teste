@@ -6,6 +6,34 @@ const estilos = {
   page:    { minHeight: '100vh', background: '#faf7f4' },
   content: { maxWidth: 700, margin: '0 auto', padding: '1.5rem' },
   h1:      { fontFamily: 'Georgia, serif', color: '#3d2b1f', marginBottom: '1.5rem' },
+
+  // Card Pix
+  cardPix: {
+    background: 'white', borderRadius: 12,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    padding: '1.25rem', marginBottom: '1.5rem',
+  },
+  cardPixTitulo: {
+    margin: '0 0 0.75rem', fontSize: '0.95rem', color: '#5a3e2b',
+    textTransform: 'uppercase', letterSpacing: '0.5px',
+    paddingBottom: '0.5rem', borderBottom: '1px solid #f0e4d4',
+  },
+  pixRow: { display: 'flex', gap: '0.75rem', alignItems: 'flex-end' },
+  label:  { display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#5a3e2b', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: 4 },
+  input: {
+    flex: 1, padding: '0.6rem 0.8rem', border: '2px solid #e8d5c0',
+    borderRadius: 8, fontSize: '0.9rem', outline: 'none',
+    fontFamily: 'inherit', color: '#3d2b1f',
+  },
+  btnSalvar: {
+    padding: '0.6rem 1.2rem', background: '#c0855a', color: 'white',
+    border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer',
+    fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0,
+  },
+  hint: { fontSize: '0.78rem', color: '#aaa', marginTop: 6, display: 'block' },
+  salvoMsg: { fontSize: '0.85rem', color: '#16a34a', fontWeight: 600, marginTop: 6 },
+
+  // Card serviços (igual ao atual)
   card:    { background: 'white', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' },
   cabecalho: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -19,8 +47,7 @@ const estilos = {
   },
   linha: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '0.75rem 1.25rem', borderTop: '1px solid #f0e4d4',
-    gap: '0.75rem',
+    padding: '0.75rem 1.25rem', borderTop: '1px solid #f0e4d4', gap: '0.75rem',
   },
   nome:   { fontSize: '0.9rem', color: '#3d2b1f', fontWeight: 500, flex: 1 },
   preco:  { fontSize: '0.9rem', color: '#5a3e2b', fontWeight: 700, minWidth: 80, textAlign: 'right' },
@@ -45,15 +72,13 @@ const estilos = {
     maxWidth: 420, padding: '1.5rem', boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
   },
   modalH2: { margin: '0 0 1rem', color: '#3d2b1f', fontSize: '1.1rem' },
-  label:   { display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#5a3e2b', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: 4 },
-  input: {
+  inputModal: {
     width: '100%', padding: '0.6rem 0.8rem', border: '2px solid #e8d5c0',
     borderRadius: 8, fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box',
     fontFamily: 'inherit', color: '#3d2b1f', marginBottom: '0.75rem',
   },
   rodapeModal: { display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1rem' },
   btnCancelar: { padding: '0.6rem 1.2rem', border: '2px solid #e8d5c0', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'inherit' },
-  btnSalvar:   { padding: '0.6rem 1.2rem', background: '#c0855a', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' },
   vazio: { textAlign: 'center', padding: '2rem', color: '#aaa', fontSize: '0.9rem' },
 }
 
@@ -62,20 +87,34 @@ const formVazio = () => ({ nome: '', preco: '' })
 export default function GerenciamentoServicos() {
   const [servicos, setServicos] = useState([])
   const [modal, setModal]       = useState(false)
-  const [editando, setEditando] = useState(null)  // null = novo, objeto = editar
+  const [editando, setEditando] = useState(null)
   const [form, setForm]         = useState(formVazio())
   const [salvando, setSalvando] = useState(false)
 
-  useEffect(() => { carregar() }, [])
+  // Config Pix
+  const [chavePix, setChavePix]     = useState('')
+  const [salvandoPix, setSalvandoPix] = useState(false)
+  const [pixSalvo, setPixSalvo]     = useState(false)
+
+  useEffect(() => {
+    carregar()
+    api.get('/config').then(r => setChavePix(r.data.chavePix || ''))
+  }, [])
 
   async function carregar() {
-    // Busca todos — ativos e inativos — para o painel de gestão
-    // O backend já retorna só os ativos; para mostrar inativos aqui,
-    // vamos buscar todos e filtrar no frontend.
-    // ATENÇÃO: o endpoint atual só retorna ativo:true.
-    // Veja a nota no backend abaixo sobre como ajustar isso.
     const res = await api.get('/servicos', { params: { todos: 'true' } })
     setServicos(res.data)
+  }
+
+  async function salvarPix() {
+    setSalvandoPix(true)
+    try {
+      await api.put('/config', { chavePix })
+      setPixSalvo(true)
+      setTimeout(() => setPixSalvo(false), 3000)
+    } finally {
+      setSalvandoPix(false)
+    }
   }
 
   function abrirNovo() {
@@ -108,24 +147,48 @@ export default function GerenciamentoServicos() {
   }
 
   async function toggleAtivo(s) {
-    // Chama PUT com ativo invertido
     await api.put(`/servicos/${s._id}`, { ativo: !s.ativo })
-    // Atualiza local sem re-buscar (o backend retorna só ativos, então atualizamos local)
     setServicos(prev => prev.map(x => x._id === s._id ? { ...x, ativo: !x.ativo } : x))
-  }
-
-  async function excluir(id) {
-    if (!confirm('Desativar este serviço permanentemente?')) return
-    await api.delete(`/servicos/${id}`)
-    setServicos(prev => prev.filter(x => x._id !== id))
   }
 
   return (
     <div style={estilos.page}>
       <Navbar />
       <div style={estilos.content}>
-        <h1 style={estilos.h1}>✂️ Gerenciamento de Serviços</h1>
+        <h1 style={estilos.h1}>✂️ Serviços & Configurações</h1>
 
+        {/* ── Card: Chave Pix Global ── */}
+        <div style={estilos.cardPix}>
+          <h2 style={estilos.cardPixTitulo}>💰 Chave Pix Global</h2>
+          <p style={{ fontSize: '0.85rem', color: '#777', margin: '0 0 0.75rem' }}>
+            Esta chave aparece automaticamente para a cliente quando o pedido estiver pronto.
+          </p>
+          <div style={estilos.pixRow}>
+            <div style={{ flex: 1 }}>
+              <label style={estilos.label}>Chave Pix</label>
+              <input
+                style={estilos.input}
+                value={chavePix}
+                onChange={e => setChavePix(e.target.value)}
+                placeholder="CPF, e-mail, telefone ou chave aleatória"
+              />
+            </div>
+            <button
+              style={estilos.btnSalvar}
+              onClick={salvarPix}
+              disabled={salvandoPix}
+            >
+              {salvandoPix ? 'Salvando...' : '💾 Salvar'}
+            </button>
+          </div>
+          {pixSalvo && <span style={estilos.salvoMsg}>✅ Chave Pix salva com sucesso!</span>}
+          <span style={estilos.hint}>
+            💡 Você também pode definir uma chave Pix diferente por pedido (no formulário do pedido).
+            A chave do pedido tem prioridade sobre esta global.
+          </span>
+        </div>
+
+        {/* ── Card: Serviços ── */}
         <div style={estilos.card}>
           <div style={estilos.cabecalho}>
             <h2 style={estilos.cabTitulo}>
@@ -158,6 +221,7 @@ export default function GerenciamentoServicos() {
         </div>
       </div>
 
+      {/* Modal novo/editar serviço */}
       {modal && (
         <div style={estilos.overlay} onClick={() => setModal(false)}>
           <div style={estilos.modal} onClick={e => e.stopPropagation()}>
@@ -167,7 +231,7 @@ export default function GerenciamentoServicos() {
 
             <label style={estilos.label}>Nome do serviço *</label>
             <input
-              style={estilos.input}
+              style={estilos.inputModal}
               value={form.nome}
               onChange={e => setForm(f => ({ ...f, nome: e.target.value }))}
               placeholder="Ex: Bainha simples"
@@ -176,7 +240,7 @@ export default function GerenciamentoServicos() {
 
             <label style={estilos.label}>Preço (R$) *</label>
             <input
-              style={estilos.input}
+              style={estilos.inputModal}
               type="number"
               step="0.01"
               min="0"
@@ -188,7 +252,7 @@ export default function GerenciamentoServicos() {
             <div style={estilos.rodapeModal}>
               <button style={estilos.btnCancelar} onClick={() => setModal(false)}>Cancelar</button>
               <button
-                style={estilos.btnSalvar}
+                style={{ ...estilos.btnSalvar, padding: '0.6rem 1.2rem' }}
                 onClick={salvar}
                 disabled={salvando || !form.nome.trim() || !form.preco}
               >

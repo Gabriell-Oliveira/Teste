@@ -4,9 +4,7 @@ import api from '../api'
 import Navbar from '../components/Navbar'
 import './FormPedido.css'
 
-// Cole esta função no topo de cada arquivo que precisar (abaixo dos imports)
 function mascararTelefone(valor) {
-  // Remove tudo que não for dígito
   const nums = valor.replace(/\D/g, '').slice(0, 11)
   if (nums.length === 0) return ''
   if (nums.length <= 2) return `(${nums}`
@@ -18,60 +16,57 @@ function mascararTelefone(valor) {
 
 function criarPeca() { return { servicos: [], urgente: false } }
 
-// Helper: retorna o id do serviço independente do formato
 function getServicoId(s) { return s._id || s.id || s.servicoId }
 
 export default function EditarPedido() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [servicos, setServicos] = useState([])
-  const [salvando, setSalvando] = useState(false)
+  const [servicos, setServicos]   = useState([])
+  const [salvando, setSalvando]   = useState(false)
   const [carregando, setCarregando] = useState(true)
-  const [form, setForm] = useState(null)
-  const [pecas, setPecas] = useState([criarPeca()])
+  const [form, setForm]           = useState(null)
+  const [pecas, setPecas]         = useState([criarPeca()])
+  const [chavePix, setChavePix]   = useState('')
 
   useEffect(() => {
-    if (!id || id === 'undefined') {
-      navigate('/')
-      return
-    }
+    if (!id || id === 'undefined') { navigate('/'); return }
     Promise.all([
       api.get('/servicos'),
-      api.get(`/pedidos/${id}`)
-    ]).then(([sRes, pRes]) => {
+      api.get(`/pedidos/${id}`),
+      api.get('/config'),
+    ]).then(([sRes, pRes, cfgRes]) => {
       setServicos(sRes.data)
+      setChavePix(cfgRes.data.chavePix || '')
       const pedido = pRes.data
 
-      // Reconstrói array de peças — suporta formato novo e antigo
       if (pedido.pecas && pedido.pecas.length > 0) {
         setPecas(pedido.pecas)
       } else if (pedido.servicos && pedido.servicos.length > 0) {
-        // Formato antigo: coloca todos os serviços na peça 1
         setPecas([{ servicos: pedido.servicos, urgente: false }])
       } else {
         setPecas(Array(pedido.quantidadePecas || 1).fill(null).map(criarPeca))
       }
 
       setForm({
-        nomeCliente: pedido.nomeCliente || '',
-        telefone: pedido.telefone || '',
+        nomeCliente:    pedido.nomeCliente || '',
+        telefone:       pedido.telefone || '',
         quantidadePecas: pedido.quantidadePecas || 1,
-        observacoes: pedido.observacoes || '',
-        dataEntrega: pedido.dataEntrega ? new Date(pedido.dataEntrega).toISOString().slice(0, 16) : '',
-        prioridade: pedido.prioridade || false,
-        status: pedido.status || 'pendente',
-        valorTotal: pedido.valorTotal || 0,
-        desconto: 0,   // ← ADICIONAR
+        observacoes:    pedido.observacoes || '',
+        dataEntrega:    pedido.dataEntrega
+          ? new Date(pedido.dataEntrega).toISOString().slice(0, 16) : '',
+        prioridade:     pedido.prioridade || false,
+        status:         pedido.status || 'pendente',
+        valorTotal:     pedido.valorTotal || 0,
+        desconto:       pedido.desconto || 0,
         pagamento: {
           chavePix: pedido.pagamento?.chavePix || '',
-          linkMercadoPago: pedido.pagamento?.linkMercadoPago || '',
         },
       })
       setCarregando(false)
     }).catch(() => navigate('/'))
   }, [id])
 
-  // Sincroniza quantidade de peças com array
+  // Sincroniza peças com quantidade
   useEffect(() => {
     if (!form) return
     const qtd = Number(form.quantidadePecas) || 1
@@ -82,32 +77,16 @@ export default function EditarPedido() {
     )
   }, [form?.quantidadePecas])
 
-  // // Recalcula valor total
-  // // useEffect 1: recalcula subtotal quando pecas mudam
-  // useEffect(() => {
-  //   const subtotal = pecas.reduce((acc, p) =>
-  //     acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
-  //   setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
-  // }, [pecas])
-
-  // // useEffect 2: recalcula valorTotal quando desconto muda
-  // useEffect(() => {
-  //   setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
-  // }, [form?.desconto])
-  // // Aqui o lint vai reclamar de dependência — é aceitável neste caso,
-  // // ou use useRef para guardar o valorOriginal fora do form.
-
-  // useEffect 1: recalcula subtotal quando pecas mudam
+  // Recalcula subtotal
   useEffect(() => {
-    if (!form) return  // ← guard contra null
+    if (!form) return
     const subtotal = pecas.reduce((acc, p) =>
       acc + (p.servicos || []).reduce((s, srv) => s + (srv.preco || 0), 0), 0)
     setForm(f => ({ ...f, valorOriginal: subtotal, valorTotal: Math.max(0, subtotal - (f.desconto || 0)) }))
   }, [pecas]) // eslint-disable-line
 
-// useEffect 2: recalcula valorTotal quando desconto muda
   useEffect(() => {
-    if (!form) return  // ← guard contra null
+    if (!form) return
     setForm(f => ({ ...f, valorTotal: Math.max(0, (f.valorOriginal || 0) - (f.desconto || 0)) }))
   }, [form?.desconto]) // eslint-disable-line
 
@@ -146,7 +125,9 @@ export default function EditarPedido() {
   if (carregando) return (
     <div className="form-pedido-page">
       <Navbar />
-      <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Carregando pedido...</div>
+      <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+        Carregando pedido...
+      </div>
     </div>
   )
 
@@ -157,7 +138,7 @@ export default function EditarPedido() {
         <h1>✏️ Editar Pedido</h1>
         <form onSubmit={salvar}>
 
-          {/* Dados do cliente */}
+          {/* Dados da cliente */}
           <section className="form-section">
             <h2>👤 Dados da Cliente</h2>
             <div className="form-row">
@@ -168,14 +149,9 @@ export default function EditarPedido() {
               </div>
               <div className="form-group">
                 <label>Telefone</label>
-                {/* <input value={form.telefone}
-                  onChange={e => setForm(f => ({ ...f, telefone: e.target.value }))} /> */}
-                {/* Substitua o input de telefone por este: */}
-                <input
-                  value={form.telefone}
+                <input value={form.telefone}
                   onChange={e => setForm(f => ({ ...f, telefone: mascararTelefone(e.target.value) }))}
-                  placeholder="(85) 9.9999-9999"
-                />
+                  placeholder="(85) 9.9999-9999" />
               </div>
             </div>
             <div className="form-row">
@@ -233,7 +209,7 @@ export default function EditarPedido() {
             ))}
           </section>
 
-          {/* Valor e status */}
+          {/* Valor */}
           <section className="form-section">
             <h2>💰 Valor e Detalhes</h2>
             <div className="form-row">
@@ -245,14 +221,10 @@ export default function EditarPedido() {
               </div>
               <div className="form-group">
                 <label>Desconto (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
+                <input type="number" step="0.01" min="0"
                   value={form.desconto || 0}
                   onChange={e => setForm(f => ({ ...f, desconto: Number(e.target.value) }))}
-                  placeholder="0.00"
-                />
+                  placeholder="0.00" />
                 <small className="hint">Deixe 0 para sem desconto.</small>
               </div>
               <div className="form-group">
@@ -280,32 +252,24 @@ export default function EditarPedido() {
             </label>
           </section>
 
-          {/* Adicionar uma nova section no formulário, antes de form-actions: */}
+          {/* Pix por pedido (opcional) */}
           <section className="form-section">
-            <h2>💳 Dados de Pagamento</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Chave Pix</label>
-                <input
-                  value={form.pagamento?.chavePix || ''}
-                  onChange={e => setForm(f => ({
-                    ...f,
-                    pagamento: { ...f.pagamento, chavePix: e.target.value }
-                  }))}
-                  placeholder="CPF, e-mail, telefone ou chave aleatória"
-                />
-              </div>
-              <div className="form-group">
-                <label>Link Mercado Pago</label>
-                <input
-                  value={form.pagamento?.linkMercadoPago || ''}
-                  onChange={e => setForm(f => ({
-                    ...f,
-                    pagamento: { ...f.pagamento, linkMercadoPago: e.target.value }
-                  }))}
-                  placeholder="https://mpago.la/..."
-                />
-              </div>
+            <h2>💳 Chave Pix (opcional)</h2>
+            <p className="hint" style={{ marginBottom: '0.75rem' }}>
+              {chavePix
+                ? `Chave global: "${chavePix}". Preencha abaixo só se quiser usar outra chave neste pedido.`
+                : 'Nenhuma chave global configurada. Preencha para usar neste pedido.'}
+            </p>
+            <div className="form-group">
+              <label>Chave Pix do pedido</label>
+              <input
+                value={form.pagamento?.chavePix || ''}
+                onChange={e => setForm(f => ({
+                  ...f,
+                  pagamento: { chavePix: e.target.value }
+                }))}
+                placeholder="Deixe em branco para usar a chave global"
+              />
             </div>
           </section>
 

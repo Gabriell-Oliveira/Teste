@@ -111,13 +111,6 @@
 .clinha.ativa { background: #86efac; }
 
 /* Detalhes */
-/* .cdetalhes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid #f0e4d4;
-  border-bottom: 1px solid #f0e4d4;
-} */
-
 .cdetalhe {
   padding: 0.85rem 1.25rem;
   border-right: 1px solid #f0e4d4;
@@ -171,6 +164,66 @@
 
 .cobs h4 { font-size: 0.8rem; color: #5a3e2b; margin: 0 0 4px; }
 .cobs p  { font-size: 0.85rem; color: #555; margin: 0; }
+
+/* ── Pagamento Pix ── */
+.cpagamento {
+  padding: 1.25rem 1.5rem;
+  background: #fffbeb;
+  border-top: 1px solid #fde68a;
+  border-bottom: 1px solid #fde68a;
+}
+
+.cpagamento > p {
+  font-size: 0.9rem;
+  color: #92400e;
+  margin: 0 0 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.cpix-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 2px dashed #f59e0b;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.cpix-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #92400e;
+  font-weight: 700;
+}
+
+.cpix-chave {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  word-break: break-all;
+  text-align: center;
+}
+
+.btn-copiar-pix {
+  margin-top: 0.25rem;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  width: 100%;
+}
+
+.btn-copiar-pix:hover { background: #d97706; }
+.btn-copiar-pix:active { transform: scale(0.97); }
 
 /* Botão receber */
 .creceber {
@@ -228,74 +281,7 @@
   margin-top: 2rem;
 }
 
-/* Adicionar no final de Cliente.css */
-.cpagamento {
-  padding: 1rem 1.5rem;
-  background: #fffbeb;
-  border-bottom: 1px solid #fde68a;
-  text-align: center;
-}
-
-.cpagamento p {
-  font-size: 0.875rem;
-  color: #92400e;
-  margin: 0 0 0.75rem;
-  font-weight: 600;
-}
-
-.cpagamento-btns {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-pix {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.65rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-pix:hover { background: #2563eb; }
-
-.btn-cartao {
-  background: #009ee3;
-  color: white;
-  padding: 0.65rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: background 0.2s;
-  display: inline-block;
-}
-
-.btn-cartao:hover { background: #0284c7; }
-
-/* Adicione ao final de Cliente.css */
-.cvalor-total {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 0.85rem 1.5rem;
-  border-top: 1px solid #f0e4d4;
-  border-bottom: 1px solid #f0e4d4;
-  gap: 1rem;
-}
-
-.cvalor-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #3d2b1f;
-  white-space: nowrap;
-}
-
+/* Valor total com desconto */
 .cvalor-direita {
   text-align: right;
   display: flex;
@@ -316,9 +302,7 @@
   color: #3d2b1f;
 }
 
-.cvalor-final.com-desconto {
-  color: #16a34a;
-}
+.cvalor-final.com-desconto { color: #16a34a; }
 
 .cvalor-desconto-msg {
   font-size: 0.78rem;
